@@ -5,10 +5,12 @@ import sys
 pygame.font.init()
 pygame.mixer.init()
 
-KNIFE_VELOCITY = 12
-PROJECTILES_AMOUNT = 10
+KNIFE_VELOCITY = 16
+PROJECTILES_AMOUNT = 12
 VELOCITY = 7
 
+
+record = 0
 FPS = 60
 WIDTH, HEIGHT = 1050, 600
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -18,7 +20,8 @@ GREY = (137, 142, 140)
 WHITE = (255, 255, 255)
 
 POINTS_FONT = pygame.font.SysFont('comicsans', 40)
-MAX_POINTS_FONT = pygame.font.SysFont('comicsans', 80)
+SCORE_FONT = pygame.font.SysFont('comicsans', 80)
+RECORD_FONT = pygame.font.SysFont('comicsans', 45)
 
 DUCK_HIT_BOOM = pygame.mixer.Sound(os.path.join("Assets", "boom.mp3"))
 DUCK_HIT = pygame.mixer.Sound(os.path.join("Assets", "Duck Quack.mp3"))
@@ -47,11 +50,11 @@ def main_menu():
         game_name = MAIN_MENU_TEXT.render("Dodge Duck", 1, (88, 238, 88))
         WIN.blit(BACKGROUND, (0, 0))
         WIN.blit(game_name, (260, 60))
-        play_button_light = pygame.transform.scale(pygame.image.load(os.path.join("Assets", "play_light.png")), (340, 120))
+        play_button_light = pygame.transform.scale(pygame.image.load(os.path.join("Assets", "play_light.png")), (345, 125))
         play_button = pygame.transform.scale(pygame.image.load(os.path.join("Assets", "play.png")), (340, 120))
         WIN.blit(play_button, ((WIDTH//2) - 165, HEIGHT//2 - 70))
         if play_button.get_rect(x=(WIDTH//2) - 165, y=HEIGHT//2 - 70).collidepoint(pygame.mouse.get_pos()):
-            WIN.blit(play_button_light, (WIDTH//2 - 165, (HEIGHT//2 - 70)))
+            WIN.blit(play_button_light, (WIDTH//2 - 166, (HEIGHT//2 - 71)))
             if event.type == pygame.MOUSEBUTTONDOWN:
                 PLAY_CLICK.play()
                 main()
@@ -84,15 +87,18 @@ def duck_movement(duck, hitbox):
         hitbox.y += VELOCITY
 
 
-def draw_max_points(text):
+def draw_max_points(text, record):
     WIN.blit(BACKGROUND, (0, 0))
-    drawtext = MAX_POINTS_FONT.render(text, 1, WHITE)
+    drawtext = SCORE_FONT.render(text, 1, WHITE)
+    drawrecord = RECORD_FONT.render(record, 1, WHITE)
     WIN.blit(drawtext, (WIDTH//2 - drawtext.get_width()//2, (HEIGHT//2 - drawtext.get_width()//2) + 50))
+    WIN.blit(drawrecord, (WIDTH//2 - drawtext.get_width()//2 + 60, (HEIGHT//2 - drawtext.get_width()//2) + 145))
     pygame.display.update()
-    pygame.time.delay(1000)
+    pygame.time.delay(1500)
 
 
 def main():
+    global record
     projectiles = []
     knife_distance = 170
     points = 0
@@ -126,8 +132,9 @@ def main():
                     DUCK_HIT.play()
                 else:
                     DUCK_HIT_BOOM.play()
-                
-                draw_max_points(f"Score: {points}")
+                if points > record:
+                    record = points
+                draw_max_points(f"Score: {points}", f"Record: {record}")
                 main()
   
 
