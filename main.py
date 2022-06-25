@@ -5,7 +5,6 @@ import sys
 pygame.font.init()
 pygame.mixer.init()
 
-KNIFE_VELOCITY = 16
 PROJECTILES_AMOUNT = 12
 VELOCITY = 7
 
@@ -98,6 +97,7 @@ def draw_max_points(text, record):
 
 
 def main():
+    KNIFE_VELOCITY = 10
     global record
     projectiles = []
     knife_distance = 170
@@ -126,6 +126,7 @@ def main():
             projectiles[i].x += KNIFE_VELOCITY
             if projectiles[i].x > 1300:
                 points += 1
+                KNIFE_VELOCITY += 0.02
                 projectiles[i] = pygame.Rect(-90, random.randint(5, 430), KNIFE_WIDTH, KNIFE_HEIGHT)
             if projectiles[i].colliderect(hitbox):
                 if points < 100:
